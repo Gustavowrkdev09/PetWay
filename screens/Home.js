@@ -9,6 +9,8 @@ export default function Home({ navigation }) {
     }
 
     return (
-        <View></View>
+        <View>
+            
+        </View>
     );
 }

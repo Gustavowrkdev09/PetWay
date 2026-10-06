@@ -144,11 +144,6 @@ export default function Cadastro({ navigation }) {
                         accessibilityRole="button"
                         accessibilityLabel={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
                     >
-                        <Ionicons
-                            name={mostrarSenha ? 'eye-off-outline' : 'eye-outline'}
-                            size={20}
-                            color="#8A8A8A"
-                        />
                     </TouchableOpacity>
                 </View>
 
@@ -178,11 +173,6 @@ export default function Cadastro({ navigation }) {
                             mostrarConfirmar ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'
                         }
                     >
-                        <Ionicons
-                            name={mostrarConfirmar ? 'eye-off-outline' : 'eye-outline'}
-                            size={20}
-                            color="#8A8A8A"
-                        />
                     </TouchableOpacity>
                 </View>
 
@@ -263,7 +253,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontSize: 15,
         color: '#1A1A1A',
-         ...Platform.select({ web: { outlineStyle: 'none' } }),
+        ...Platform.select({ web: { outlineStyle: 'none' } }),
     },
     erro: {
         color: '#C62828',

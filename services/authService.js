@@ -10,5 +10,5 @@ export async function login(email, senha) {
 }
 
 export async function sair() {
-    return await createUserWithEmailAndPassword(auth);
+    return await signOut(auth);
 }

@@ -50,7 +50,7 @@ export default function Login({ navigation }) {
             if (status === 401 || status === 400) {
                 setErro('E-mail ou senha incorretos.');
             } else if (!error?.response) {
-                setErro('Sem conexão com o servidor. Verifique sua internet.');
+                setErro('E-mail ou senha incorretos.');
             } else {
                 setErro('Algo deu errado. Tente novamente em instantes.');
             }
@@ -119,11 +119,6 @@ export default function Login({ navigation }) {
                         accessibilityRole="button"
                         accessibilityLabel={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
                     >
-                        <Ionicons
-                            name={mostrarSenha ? 'eye-off-outline' : 'eye-outline'}
-                            size={20}
-                            color="#8A8A8A"
-                        />
                     </TouchableOpacity>
                 </View>
 
