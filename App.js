@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from "./screens/Login";
 import Cadastro from "./screens/Cadastro";
 import Home from "./screens/Home";
+import Perfil from "./screens/Perfil";
+import Notificacao from "./screens/Notificacao";
 
 export default function App() {
   
@@ -27,6 +29,16 @@ export default function App() {
           component={Home}
           options={{ headerShown: false }}
         />
+      <Stack.Screen 
+        name='Perfil'
+        component={Perfil}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name='Notificacao'
+        component={Notificacao}
+        options={{ headerShown: false }}
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );

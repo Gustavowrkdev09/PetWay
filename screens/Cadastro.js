@@ -14,22 +14,20 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { cadastrar } from '../services/authService';
 
-const logo = require('../assets/logo.png');
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const SENHA_MIN = 8;
+const SENHA_MINIMA = 8;
 
 export default function Cadastro({ navigation }) {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [mostrarSenha, setMostrarSenha] = useState(false);
-    const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
+    const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState('');
 
     const senhaRef = useRef(null);
-    const confirmarRef = useRef(null);
+    const confirmarSenhaRef = useRef(null);
 
     async function realizarCadastro() {
         if (carregando) return;
@@ -40,14 +38,17 @@ export default function Cadastro({ navigation }) {
             setErro('Preencha todos os campos.');
             return;
         }
+
         if (!EMAIL_REGEX.test(emailLimpo)) {
             setErro('Digite um e-mail válido.');
             return;
         }
-        if (senha.length < SENHA_MIN) {
-            setErro(`A senha precisa ter pelo menos ${SENHA_MIN} caracteres.`);
+
+        if (senha.length < SENHA_MINIMA) {
+            setErro(`A senha precisa ter pelo menos ${SENHA_MINIMA} caracteres.`);
             return;
         }
+
         if (senha !== confirmarSenha) {
             setErro('As senhas não coincidem.');
             return;
@@ -55,11 +56,13 @@ export default function Cadastro({ navigation }) {
 
         setErro('');
         setCarregando(true);
+
         try {
             await cadastrar(emailLimpo, senha);
             navigation.navigate('Login');
         } catch (error) {
             const status = error?.response?.status;
+
             if (status === 409) {
                 setErro('Este e-mail já está cadastrado. Tente fazer login.');
             } else if (status === 400 || status === 422) {
@@ -69,7 +72,10 @@ export default function Cadastro({ navigation }) {
             } else {
                 setErro('Não foi possível criar a conta. Tente novamente em instantes.');
             }
-            if (__DEV__) console.log(error);
+
+            if (__DEV__) {
+                console.log(error);
+            }
         } finally {
             setCarregando(false);
         }
@@ -91,18 +97,33 @@ export default function Cadastro({ navigation }) {
                     accessibilityRole="button"
                     accessibilityLabel="Voltar"
                 >
-                    <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+                    <Ionicons
+                        name="arrow-back"
+                        size={24}
+                        color="#1A1A1A"
+                    />
                 </TouchableOpacity>
 
-                <Image source={logo} style={styles.logo} resizeMode="contain" />
+                <Image
+                    source={require('../assets/logo.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                />
 
                 <Text style={styles.titulo}>Crie sua conta</Text>
+
                 <Text style={styles.subtitulo}>
-                    É rápido e fácil! Assim você pode aproveitar todos os benefícios do PetWay.
+                    É rápido e fácil! Assim você pode aproveitar todos os
+                    benefícios do PetWay.
                 </Text>
 
                 <View style={styles.campo}>
-                    <Ionicons name="mail-outline" size={20} color="#333" />
+                    <Ionicons
+                        name="mail-outline"
+                        size={20}
+                        color="#333"
+                    />
+
                     <TextInput
                         style={styles.input}
                         placeholder="E-mail"
@@ -121,7 +142,12 @@ export default function Cadastro({ navigation }) {
                 </View>
 
                 <View style={styles.campo}>
-                    <Ionicons name="lock-closed-outline" size={20} color="#333" />
+                    <Ionicons
+                        name="lock-closed-outline"
+                        size={20}
+                        color="#333"
+                    />
+
                     <TextInput
                         ref={senhaRef}
                         style={styles.input}
@@ -135,28 +161,41 @@ export default function Cadastro({ navigation }) {
                         autoComplete="new-password"
                         textContentType="newPassword"
                         returnKeyType="next"
-                        onSubmitEditing={() => confirmarRef.current?.focus()}
+                        onSubmitEditing={() => confirmarSenhaRef.current?.focus()}
                         editable={!carregando}
                     />
+
                     <TouchableOpacity
-                        onPress={() => setMostrarSenha((v) => !v)}
+                        onPress={() => setMostrarSenha((valor) => !valor)}
                         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                         accessibilityRole="button"
-                        accessibilityLabel={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                        accessibilityLabel={
+                            mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'
+                        }
                     >
+                        <Ionicons
+                            name={mostrarSenha ? 'eye-off-outline' : 'eye-outline'}
+                            size={20}
+                            color="#333"
+                        />
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.campo}>
-                    <Ionicons name="lock-closed-outline" size={20} color="#333" />
+                    <Ionicons
+                        name="lock-closed-outline"
+                        size={20}
+                        color="#333"
+                    />
+
                     <TextInput
-                        ref={confirmarRef}
+                        ref={confirmarSenhaRef}
                         style={styles.input}
                         placeholder="Confirmar senha"
                         placeholderTextColor="#9A9A9A"
                         value={confirmarSenha}
                         onChangeText={setConfirmarSenha}
-                        secureTextEntry={!mostrarConfirmar}
+                        secureTextEntry={!mostrarConfirmarSenha}
                         autoCapitalize="none"
                         autoCorrect={false}
                         autoComplete="new-password"
@@ -165,25 +204,45 @@ export default function Cadastro({ navigation }) {
                         onSubmitEditing={realizarCadastro}
                         editable={!carregando}
                     />
+
                     <TouchableOpacity
-                        onPress={() => setMostrarConfirmar((v) => !v)}
+                        onPress={() =>
+                            setMostrarConfirmarSenha((valor) => !valor)
+                        }
                         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                         accessibilityRole="button"
                         accessibilityLabel={
-                            mostrarConfirmar ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'
+                            mostrarConfirmarSenha
+                                ? 'Ocultar confirmação de senha'
+                                : 'Mostrar confirmação de senha'
                         }
                     >
+                        <Ionicons
+                            name={
+                                mostrarConfirmarSenha
+                                    ? 'eye-off-outline'
+                                    : 'eye-outline'
+                            }
+                            size={20}
+                            color="#333"
+                        />
                     </TouchableOpacity>
                 </View>
 
                 {!!erro && (
-                    <Text style={styles.erro} accessibilityLiveRegion="polite">
+                    <Text
+                        style={styles.erro}
+                        accessibilityLiveRegion="polite"
+                    >
                         {erro}
                     </Text>
                 )}
 
                 <TouchableOpacity
-                    style={[styles.botao, carregando && styles.botaoDesabilitado]}
+                    style={[
+                        styles.botao,
+                        carregando && styles.botaoDesabilitado,
+                    ]}
                     onPress={realizarCadastro}
                     disabled={carregando}
                     activeOpacity={0.85}
@@ -197,8 +256,13 @@ export default function Cadastro({ navigation }) {
                 </TouchableOpacity>
 
                 <View style={styles.rodape}>
-                    <Text style={styles.textoEscuro}>Já tem uma conta? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.textoEscuro}>
+                        Já tem uma conta?{' '}
+                    </Text>
+
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Login')}
+                    >
                         <Text style={styles.link}>Faça login</Text>
                     </TouchableOpacity>
                 </View>
@@ -208,28 +272,36 @@ export default function Cadastro({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    flex: { flex: 1, backgroundColor: '#FFFAEE' },
+    flex: {
+        flex: 1,
+        backgroundColor: '#FFFAEE',
+    },
+
     container: {
         flexGrow: 1,
         paddingHorizontal: 24,
         paddingTop: 56,
         paddingBottom: 32,
     },
+
     voltar: {
         alignSelf: 'flex-start',
         marginBottom: 8,
     },
+
     logo: {
         width: 180,
         height: 150,
         alignSelf: 'center',
         marginBottom: 16,
     },
+
     titulo: {
         fontSize: 24,
         fontWeight: '700',
         color: '#1A1A1A',
     },
+
     subtitulo: {
         fontSize: 15,
         color: '#333',
@@ -237,6 +309,7 @@ const styles = StyleSheet.create({
         marginBottom: 24,
         lineHeight: 21,
     },
+
     campo: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -248,18 +321,25 @@ const styles = StyleSheet.create({
         height: 54,
         marginBottom: 14,
     },
+
     input: {
         flex: 1,
         marginLeft: 10,
         fontSize: 15,
         color: '#1A1A1A',
-        ...Platform.select({ web: { outlineStyle: 'none' } }),
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            },
+        }),
     },
+
     erro: {
         color: '#C62828',
         fontSize: 13,
         marginBottom: 12,
     },
+
     botao: {
         backgroundColor: '#FBB827',
         height: 54,
@@ -268,19 +348,29 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 6,
     },
-    botaoDesabilitado: { opacity: 0.7 },
+
+    botaoDesabilitado: {
+        opacity: 0.7,
+    },
+
     botaoTexto: {
         fontSize: 17,
         fontWeight: '700',
         color: '#1A1A1A',
     },
-    textoEscuro: { fontSize: 14, color: '#1A1A1A' },
+
+    textoEscuro: {
+        fontSize: 14,
+        color: '#1A1A1A',
+    },
+
     rodape: {
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 'auto',
         paddingTop: 32,
     },
+
     link: {
         fontSize: 14,
         color: '#E8890C',
@@ -288,3 +378,4 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
 });
+

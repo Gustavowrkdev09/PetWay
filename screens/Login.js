@@ -15,7 +15,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { login } from '../services/authService';
 
 const logo = require('../assets/logo.png');
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Login({ navigation }) {
@@ -31,10 +30,12 @@ export default function Login({ navigation }) {
         if (carregando) return;
 
         const emailLimpo = email.trim().toLowerCase();
+
         if (!emailLimpo || !senha) {
             setErro('Preencha e-mail e senha.');
             return;
         }
+
         if (!EMAIL_REGEX.test(emailLimpo)) {
             setErro('Digite um e-mail válido.');
             return;
@@ -42,11 +43,17 @@ export default function Login({ navigation }) {
 
         setErro('');
         setCarregando(true);
+
         try {
             await login(emailLimpo, senha);
-            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Home' }],
+            });
         } catch (error) {
             const status = error?.response?.status;
+
             if (status === 401 || status === 400) {
                 setErro('E-mail ou senha incorretos.');
             } else if (!error?.response) {
@@ -54,7 +61,10 @@ export default function Login({ navigation }) {
             } else {
                 setErro('Algo deu errado. Tente novamente em instantes.');
             }
-            if (__DEV__) console.log(error);
+
+            if (__DEV__) {
+                console.log(error);
+            }
         } finally {
             setCarregando(false);
         }
@@ -69,15 +79,28 @@ export default function Login({ navigation }) {
                 contentContainerStyle={styles.container}
                 keyboardShouldPersistTaps="handled"
             >
-                <Image source={logo} style={styles.logo} resizeMode="contain" />
+                <Image
+                    source={logo}
+                    style={styles.logo}
+                    resizeMode="contain"
+                />
 
-                <Text style={styles.titulo}>Bem-vindo de volta!</Text>
+                <Text style={styles.titulo}>
+                    Bem-vindo de volta!
+                </Text>
+
                 <Text style={styles.subtitulo}>
-                    Faça login para continuar{'\n'}cuidando do seu pet.
+                    Faça login para continuar{'\n'}
+                    cuidando do seu pet.
                 </Text>
 
                 <View style={styles.campo}>
-                    <Ionicons name="mail-outline" size={20} color="#333" />
+                    <Ionicons
+                        name="mail-outline"
+                        size={20}
+                        color="#333"
+                    />
+
                     <TextInput
                         style={styles.input}
                         placeholder="E-mail"
@@ -96,7 +119,12 @@ export default function Login({ navigation }) {
                 </View>
 
                 <View style={styles.campo}>
-                    <Ionicons name="lock-closed-outline" size={20} color="#333" />
+                    <Ionicons
+                        name="lock-closed-outline"
+                        size={20}
+                        color="#333"
+                    />
+
                     <TextInput
                         ref={senhaRef}
                         style={styles.input}
@@ -113,23 +141,48 @@ export default function Login({ navigation }) {
                         onSubmitEditing={realizarLogin}
                         editable={!carregando}
                     />
+
                     <TouchableOpacity
-                        onPress={() => setMostrarSenha((v) => !v)}
-                        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                        onPress={() => setMostrarSenha((valor) => !valor)}
+                        hitSlop={{
+                            top: 12,
+                            bottom: 12,
+                            left: 12,
+                            right: 12,
+                        }}
                         accessibilityRole="button"
-                        accessibilityLabel={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                        accessibilityLabel={
+                            mostrarSenha
+                                ? 'Ocultar senha'
+                                : 'Mostrar senha'
+                        }
                     >
+                        <Ionicons
+                            name={
+                                mostrarSenha
+                                    ? 'eye-off-outline'
+                                    : 'eye-outline'
+                            }
+                            size={20}
+                            color="#333"
+                        />
                     </TouchableOpacity>
                 </View>
 
                 {!!erro && (
-                    <Text style={styles.erro} accessibilityLiveRegion="polite">
+                    <Text
+                        style={styles.erro}
+                        accessibilityLiveRegion="polite"
+                    >
                         {erro}
                     </Text>
                 )}
 
                 <TouchableOpacity
-                    style={[styles.botao, carregando && styles.botaoDesabilitado]}
+                    style={[
+                        styles.botao,
+                        carregando && styles.botaoDesabilitado,
+                    ]}
                     onPress={realizarLogin}
                     disabled={carregando}
                     activeOpacity={0.85}
@@ -138,14 +191,23 @@ export default function Login({ navigation }) {
                     {carregando ? (
                         <ActivityIndicator color="#1A1A1A" />
                     ) : (
-                        <Text style={styles.botaoTexto}>Entrar</Text>
+                        <Text style={styles.botaoTexto}>
+                            Entrar
+                        </Text>
                     )}
                 </TouchableOpacity>
 
                 <View style={styles.rodape}>
-                    <Text style={styles.textoEscuro}>Não tem uma conta? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
-                        <Text style={styles.link}>Cadastre-se</Text>
+                    <Text style={styles.textoEscuro}>
+                        Não tem uma conta?{' '}
+                    </Text>
+
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Cadastro')}
+                    >
+                        <Text style={styles.link}>
+                            Cadastre-se
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -154,25 +216,32 @@ export default function Login({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    flex: { flex: 1, backgroundColor: '#FFFAEE' },
+    flex: {
+        flex: 1,
+        backgroundColor: '#FFFAEE',
+    },
+
     container: {
         flexGrow: 1,
         paddingHorizontal: 24,
         paddingTop: 72,
         paddingBottom: 32,
     },
+
     logo: {
         width: 200,
         height: 170,
         alignSelf: 'center',
         marginBottom: 24,
     },
+
     titulo: {
         fontSize: 24,
         fontWeight: '700',
         color: '#1A1A1A',
         textAlign: 'center',
     },
+
     subtitulo: {
         fontSize: 15,
         color: '#333',
@@ -181,6 +250,7 @@ const styles = StyleSheet.create({
         marginBottom: 28,
         lineHeight: 21,
     },
+
     campo: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -192,18 +262,25 @@ const styles = StyleSheet.create({
         height: 54,
         marginBottom: 14,
     },
+
     input: {
         flex: 1,
         marginLeft: 10,
         fontSize: 15,
         color: '#1A1A1A',
-         ...Platform.select({ web: { outlineStyle: 'none' } }),
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            },
+        }),
     },
+
     erro: {
         color: '#C62828',
         fontSize: 13,
         marginBottom: 12,
     },
+
     botao: {
         backgroundColor: '#FBB827',
         height: 54,
@@ -212,23 +289,29 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 6,
     },
-    botaoDesabilitado: { opacity: 0.7 },
+
+    botaoDesabilitado: {
+        opacity: 0.7,
+    },
+
     botaoTexto: {
         fontSize: 17,
         fontWeight: '700',
         color: '#1A1A1A',
     },
-    linkEsqueci: {
-        alignSelf: 'center',
-        paddingVertical: 14,
+
+    textoEscuro: {
+        fontSize: 14,
+        color: '#1A1A1A',
     },
-    textoEscuro: { fontSize: 14, color: '#1A1A1A' },
+
     rodape: {
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 'auto',
         paddingTop: 32,
     },
+
     link: {
         fontSize: 14,
         color: '#E8890C',
